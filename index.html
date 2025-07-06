@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Detect Loop in Linked List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f1f1;
+      text-align: center;
+      padding: 30px;
+    }
+
+    input {
+      padding: 5px;
+      margin: 5px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+    }
+
+    .node {
+      display: inline-block;
+      margin: 10px;
+      padding: 10px 20px;
+      background: #4caf50;
+      color: white;
+      border-radius: 20px;
+      position: relative;
+    }
+
+    .node::after {
+      content: "→";
+      position: absolute;
+      right: -20px;
+      top: 8px;
+      color: black;
+    }
+
+    .loop {
+      color: red;
+      font-weight: bold;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h2>🔗 Linked List Loop Detector</h2>
+  <input type="number" id="nodeValue" placeholder="Enter Node Value">
+  <button onclick="addNode()">Add Node</button>
+  <button onclick="createLoop()">Create Loop</button>
+  <button onclick="detectLoop()">Detect Loop</button>
+
+  <div id="linkedList"></div>
+  <div id="result" class="loop"></div>
+
+  <script>
+    class Node {
+      constructor(data) {
+        this.data = data;
+        this.next = null;
+      }
+    }
+
+    let head = null;
+    let tail = null;
+    let allNodes = [];
+
+    function addNode() {
+      const val = document.getElementById("nodeValue").value;
+      if (!val) return;
+      const newNode = new Node(parseInt(val));
+      if (!head) {
+        head = newNode;
+        tail = newNode;
+      } else {
+        tail.next = newNode;
+        tail = newNode;
+      }
+      allNodes.push(newNode);
+      renderList();
+    }
+
+    function createLoop() {
+      if (allNodes.length > 2) {
+        tail.next = allNodes[1]; // Creates a loop to the second node
+        document.getElementById("result").innerText = "Loop created from last node to 2nd node.";
+      }
+    }
+
+    function detectLoop() {
+      let slow = head;
+      let fast = head;
+      let found = false;
+
+      while (slow && fast && fast.next) {
+        slow = slow.next;
+        fast = fast.next.next;
+
+        if (slow === fast) {
+          found = true;
+          break;
+        }
+      }
+
+      document.getElementById("result").innerText = found ? "✅ Loop detected in Linked List." : "❌ No loop found.";
+    }
+
+    function renderList() {
+      const listDiv = document.getElementById("linkedList");
+      listDiv.innerHTML = "";
+      for (let node of allNodes) {
+        const div = document.createElement("div");
+        div.className = "node";
+        div.innerText = node.data;
+        listDiv.appendChild(div);
+      }
+    }
+  </script>
+
+</body>
+</html>
